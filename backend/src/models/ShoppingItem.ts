@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IShoppingItem extends Document {
-  _id: mongoose.Types.ObjectId;
   name: string;
   bought: boolean;
   createdAt: Date;
@@ -13,6 +12,7 @@ const ShoppingItemSchema: Schema = new Schema(
       type: String,
       required: [true, 'Product name is required'],
       trim: true,
+      maxlength: [200, 'Product name cannot exceed 200 characters'],
     },
     bought: {
       type: Boolean,
