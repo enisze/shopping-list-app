@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createItem, deleteItem, fetchItems, updateItem } from '@/api/items';
-import type { ShoppingItem } from '@/types/ShoppingItem';
 
 export const shoppingItemsQueryKey = ['shoppingItems'] as const;
 
@@ -22,11 +21,8 @@ export function useAddItem() {
 
   return useMutation({
     mutationFn: createItem,
-    onSuccess: (newItem) => {
-      queryClient.setQueryData<ShoppingItem[]>(
-        shoppingItemsQueryKey,
-        (old = []) => [newItem, ...old],
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: shoppingItemsQueryKey });
     },
   });
 }
@@ -36,14 +32,8 @@ export function useToggleItem() {
 
   return useMutation({
     mutationFn: updateItem,
-    onSuccess: (updatedItem) => {
-      queryClient.setQueryData<ShoppingItem[]>(
-        shoppingItemsQueryKey,
-        (old = []) =>
-          old.map((item) =>
-            item._id === updatedItem._id ? updatedItem : item,
-          ),
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: shoppingItemsQueryKey });
     },
   });
 }
@@ -53,11 +43,8 @@ export function useDeleteItem() {
 
   return useMutation({
     mutationFn: deleteItem,
-    onSuccess: (_, id) => {
-      queryClient.setQueryData<ShoppingItem[]>(
-        shoppingItemsQueryKey,
-        (old = []) => old.filter((item) => item._id !== id),
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: shoppingItemsQueryKey });
     },
   });
 }
